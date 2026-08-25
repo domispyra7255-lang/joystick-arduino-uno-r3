@@ -1,4 +1,5 @@
 // Arduino UNO R3 - Odczytywanie pozycji modułu Joystick (tylko przy zmianie)
+// OBRÓCONE O 90 STOPNI W PRAWO
 // Pinowanie:
 // VRx -> A0 (analogowy)
 // VRy -> A1 (analogowy)
@@ -28,8 +29,9 @@ void setup() {
   Serial.begin(9600);  // Inicjalizacja komunikacji szeregowej
   pinMode(joystick_SW, INPUT_PULLUP);  // Przycisk z wewnętrznym pull-up
   
-  Serial.println("=== Joystick Arduino UNO R3 ===");
+  Serial.println("=== Joystick Arduino UNO R3 (OBRÓCONY 90° W PRAWO) ===");
   Serial.println("Pozycja będzie wyświetlana TYLKO przy zmianie pozycji");
+  Serial.println("GÓRA -> LEWO | PRAWO -> GÓRA | DÓŁ -> PRAWO | LEWO -> DÓŁ");
   Serial.println("");
 }
 
@@ -59,7 +61,7 @@ void loop() {
     Serial.print(" | Przycisk: ");
     Serial.println(button_value == 0 ? "WCISNIETY" : "ZWOLNIONY");
     
-    // Określenie pozycji joystick'a
+    // Określenie pozycji joystick'a (OBRÓCONA O 90 STOPNI)
     printJoystickPosition(x_value, y_value);
     
     Serial.println("---");
@@ -73,23 +75,25 @@ void loop() {
   delay(50);  // Sprawdzaj co 50ms (nie blokuje, gdy się nic nie zmienia)
 }
 
-// Funkcja do wyświetlania kierunku joystick'a
+// Funkcja do wyświetlania kierunku joystick'a (OBRÓCONA O 90 STOPNI W PRAWO)
+// Oryginalna mapa:  GÓRA(y>700) PRAWO(x>700) DÓŁ(y<300) LEWO(x<300)
+// Nowa mapa:        LEWO(y>700) GÓRA(x>700)  PRAWO(y<300) DÓŁ(x<300)
 void printJoystickPosition(int x, int y) {
   Serial.print("Pozycja: ");
   
-  // Określenie kierunku
-  if (x < 300) {
+  // Określenie kierunku (OBRÓCONE 90° W PRAWO)
+  if (y > 700) {
     Serial.print("LEWO ");
-  } else if (x > 700) {
+  } else if (y < 300) {
     Serial.print("PRAWO ");
   } else {
     Serial.print("SRODEK_X ");
   }
   
-  if (y < 300) {
-    Serial.print("| DÓŁ");
-  } else if (y > 700) {
+  if (x > 700) {
     Serial.print("| GÓRA");
+  } else if (x < 300) {
+    Serial.print("| DÓŁ");
   } else {
     Serial.print("| SRODEK_Y");
   }
